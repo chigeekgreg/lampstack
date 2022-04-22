@@ -1,0 +1,35 @@
+version: "2.4"
+services:
+  web:
+    image: chigeekgreg/lampstack-web:production
+    build:
+      context: .
+      target: production
+    volumes:
+      - ./config:/var/www/config
+    ports:
+      - "80:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  db:
+    image: mariadb
+    volumes:
+      - db:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+      - ./seed:/seed
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-u$MYSQL_USER", "-p$MYSQL_PASSWORD", "ping", "--silent"]
+      interval: 5s
+      start_period: 10s
+      timeout: 5s
+      retries: 2
+    restart: unless-stopped
+volumes:
+  db:
