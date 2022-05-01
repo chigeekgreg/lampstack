@@ -6,4 +6,4 @@ services:
     build:
       target: development
     volumes:
-      - ./html:/var/www/html
+      - .:/var/www

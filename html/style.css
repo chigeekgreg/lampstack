@@ -5,3 +5,32 @@ body { max-width: 960px; margin: auto; }
 @media (prefers-color-scheme: light) {
     body{ background: #eee; color: #111; }
 }
+
+details {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: .5em .5em 0;
+}
+
+summary {
+    font-weight: bold;
+    margin: -.5em -.5em 0;
+    padding: .5em;
+}
+
+details[open] {
+    padding: .5em;
+}
+
+details[open] summary {
+    border-bottom: 1px solid #aaa;
+    margin-bottom: .5em;
+}
+
+.row {
+    padding: 0 10px 0 10px;
+    margin: 10px 0 10px 0;
+    filter: brightness(85%);
+    border-style: ridge;
+    border-width: medium;
+}

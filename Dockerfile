@@ -7,4 +7,4 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 FROM base AS production
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY html /var/www/html
+COPY controllers/ html/ lib/ routes/ views/ /var/www/

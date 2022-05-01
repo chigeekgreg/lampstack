@@ -1,8 +1,8 @@
-# LAMP Stack Docker Example
-Example of a LAMP stack using docker-compose
+# Hello MVC
+This is an example of a very basic and stupid attempt to implement a design that somewhat resembles MVC, on a plain LAMP stack, with no external dependencies other than the PDO database driver for MariaDB, complete with fancy vanity routing and a basic RESTful CRUD API, made in a few hours instead of sleeping.
 
 ## Demo
-[![asciicast](https://asciinema.org/a/AA9zEYiHjt5QNFigKLTytrM2V.svg)](https://asciinema.org/a/AA9zEYiHjt5QNFigKLTytrM2V)
+[![image](https://user-images.githubusercontent.com/91397173/166156421-25b184c0-626b-47cd-b741-bd0154dc342d.png)](https://hello-mvc.chigeek.xyz/)
 
 ## Compose stack files
 ### `Dockerfile`
@@ -16,7 +16,7 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 FROM base AS production
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY html /var/www/html
+COPY controllers/ html/ lib/ routes/ views/ /var/www/
 ```
 This dockerfile is a multi-stage build that has two three stages, which each build targets: `base`, `development`, and `production`. The `development` target builds and image that is lighter weight and does not include thr html files which will need to be bbind-mounted into the container as a volume. The `production` target builds a container suitable for production, with all of the html files added to the container as an immutable layer. The two targets also use different php.ini files since some options are helpful for debugging but should not be used in a production environment. The `base` stage contains layers that are commo to both targets. To build using docker cli, run `docker build --tag chigeekgreg/lampstack:development --target development.` for development, or `docker build --tag chigeekgreg/lampstack:production .` for production. When using Docker Buildkit, only the desired target stage is run and layers are cached to improve build times.
 
@@ -70,7 +70,7 @@ services:
     build:
       target: development
     volumes:
-      - ./html:/var/www/html
+      - .:/var/www
 ```
 The benefit of this override file is to support fast reloading of the content in the webroot by bind-mounting the html directory instead of packing it into the image. When `docker-compose up` is run, the directives from the override file are automatically merged over the configuration from the default `docker-compose.yml` file. To prevent that from happening, rename the override file to something else, like `docker-compose.dev.yml`. Then the production environment can be brought up with `docker compose up` and the development environment with `docker-compose -f docker-compose.yml -f docker-compose.dev.yml`.
 
